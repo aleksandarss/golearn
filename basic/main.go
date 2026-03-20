@@ -7,6 +7,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
+type podsOptions struct {
+	namespace string
+	output    string
+}
+
 // rootCmd is a pointer to &cobra.Command{}; rootCmd is of type *cobra.Command
 var rootCmd = &cobra.Command{
 	Use:   "devtool",
@@ -21,15 +26,14 @@ var versionCmd = &cobra.Command{
 	},
 }
 
-var namespace string
-var output string
+var mainOptions = &podsOptions{}
 
 var podsCmd = &cobra.Command{
 	Use:   "pods",
 	Short: "List pods in a namespace",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("Listing pods in namespace: %s\n", namespace)
-		fmt.Printf("Output format: %s\n", output)
+		fmt.Printf("Listing pods in namespace: %s\n", mainOptions.namespace)
+		fmt.Printf("Output format: %s\n", mainOptions.output)
 	},
 }
 
@@ -37,8 +41,8 @@ func main() {
 	rootCmd.SilenceErrors = true
 	rootCmd.SilenceUsage = true
 
-	podsCmd.Flags().StringVarP(&namespace, "namespace", "n", "default", "Kubernetes namespace")
-	podsCmd.Flags().StringVarP(&output, "output", "o", "table", "Output format (table|json|yaml)")
+	podsCmd.Flags().StringVarP(&mainOptions.namespace, "namespace", "n", "default", "Kubernetes namespace")
+	podsCmd.Flags().StringVarP(&mainOptions.output, "output", "o", "table", "Output format (table|json|yaml)")
 
 	rootCmd.AddCommand(versionCmd)
 	rootCmd.AddCommand(podsCmd)
