@@ -8,8 +8,9 @@ import (
 )
 
 type podsOptions struct {
-	namespace string
-	output    string
+	namespace  string
+	output     string
+	kubeconfig string
 }
 
 // rootCmd is a pointer to &cobra.Command{}; rootCmd is of type *cobra.Command
@@ -35,11 +36,13 @@ func newPodsCmd() *cobra.Command {
 		Run: func(cmd *cobra.Command, args []string) {
 			fmt.Printf("Listing pods in namespace: %s\n", opts.namespace)
 			fmt.Printf("Output format: %s\n", opts.output)
+			fmt.Printf("Using kubeconfig: %s\n", opts.kubeconfig)
 		},
 	}
 
 	cmd.Flags().StringVarP(&opts.namespace, "namespace", "n", "default", "Kubernetes namespace")
 	cmd.Flags().StringVarP(&opts.output, "output", "o", "table", "Output format (table|json|yaml)")
+	cmd.Flags().StringVarP(&opts.kubeconfig, "kubeconfig", "k", "default", "Kubeconfig")
 
 	return cmd
 }
