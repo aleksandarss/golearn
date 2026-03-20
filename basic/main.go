@@ -26,26 +26,30 @@ var versionCmd = &cobra.Command{
 	},
 }
 
-var mainOptions = &podsOptions{}
+func newPodsCmd() *cobra.Command {
+	opts := &podsOptions{}
 
-var podsCmd = &cobra.Command{
-	Use:   "pods",
-	Short: "List pods in a namespace",
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("Listing pods in namespace: %s\n", mainOptions.namespace)
-		fmt.Printf("Output format: %s\n", mainOptions.output)
-	},
+	cmd := &cobra.Command{
+		Use:   "pods",
+		Short: "List pods in a namespace",
+		Run: func(cmd *cobra.Command, args []string) {
+			fmt.Printf("Listing pods in namespace: %s\n", opts.namespace)
+			fmt.Printf("Output format: %s\n", opts.output)
+		},
+	}
+
+	cmd.Flags().StringVarP(&opts.namespace, "namespace", "n", "default", "Kubernetes namespace")
+	cmd.Flags().StringVarP(&opts.output, "output", "o", "table", "Output format (table|json|yaml)")
+
+	return cmd
 }
 
 func main() {
 	rootCmd.SilenceErrors = true
 	rootCmd.SilenceUsage = true
 
-	podsCmd.Flags().StringVarP(&mainOptions.namespace, "namespace", "n", "default", "Kubernetes namespace")
-	podsCmd.Flags().StringVarP(&mainOptions.output, "output", "o", "table", "Output format (table|json|yaml)")
-
 	rootCmd.AddCommand(versionCmd)
-	rootCmd.AddCommand(podsCmd)
+	rootCmd.AddCommand(newPodsCmd())
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Fprintln(os.Stderr, err)
